@@ -5,15 +5,15 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
+venv/
 build/
 dist/
 *.egg-info/
 *.log
 
 # Environments
-.env
-.venv
+venv
+venv
 
 # VS Code
 .vscode/
