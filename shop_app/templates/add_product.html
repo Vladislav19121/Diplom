@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавить товар в категорию "{{ category.name }}"{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Добавить товар в категорию "{{ category.name }}"</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}  {# Отображаем форму в виде параграфов #}
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a href="{% url 'category_products' id=category.id %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+{% endblock %}
