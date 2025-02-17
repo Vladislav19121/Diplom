@@ -66,3 +66,23 @@ def delete_product(request, id):
     if request.user == product.user:
         product.delete()
         return redirect('category_products', id = product.category.id)
+    
+def cart(request):
+    cart_products = Cart.objects.filter(user=request.user).order_by('added_at')
+    total = sum(product.total_price() for product in cart_products)
+    return render(request, 'cart.html', {'cart_products': cart_products, 'total': total})
+    
+def add_product_in_cart(request, id):
+    product = get_object_or_404(Product, id=id)
+    cart_item, created = Cart.objects.get_or_create(product=product, user=request.user)
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+        return redirect('cart')
+    else:
+        return redirect('category_products', id = product.category.id)
+    
+def remove_form_cart(request, cart_product_id):
+    cart_product = get_object_or_404(Cart, id=cart_product_id, user=request.user)
+    cart_product.delete()
+    return redirect('cart')
