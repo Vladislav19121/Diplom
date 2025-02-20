@@ -20,7 +20,11 @@
                             <p class="card-text">{{ product.description|truncatewords:20 }}</p>
                             <p class="card-text">Цена: {{ product.price }}</p>
                             <p class="card-text">Количество: {{ product.stock }}</p>
+                            <p class="card-text">Продавец: {{ product.user }}</p>
+
+                            {% if user.is_authenticated %}
                             <a href="{% url 'add_product_in_cart' id=product.id %}" class="btn btn-primary">Добавить в корзину</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
