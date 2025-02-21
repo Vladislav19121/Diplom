@@ -2,66 +2,69 @@
 
 {% block title %}Товары из категории {{ category.name }}{% endblock %}
 
+
+
 {% block content %}
-    <div class="container">
-        <h1>Товары из категории "{{ category.name }}"</h1>
-        <h2>Фильтры</h2>
-            <form method="get" action="{% url 'category_products' id=category.id %}">
-                <label for="min_price">Минимальная цена:</label>
-                <input type="number" id="min_price" name="min_price" value="{% if min_price %}{{ min_price }}{% endif %}">
+  <div class="container">
+    <h1>Товары из категории "{{ category.name }}"</h1>
 
-                <label for="max_price">Максимальная цена:</label>
-                <input type="number" id="max_price" name="max_price" value="{% if max_price %}{{ max_price }}{% endif %}">
+    {# Фильтры #}
+    <div class="filter-form">
+      <h2>Фильтры</h2>
+      <form method="get" action="{% url 'category_products' id=category.id %}">
+        <label for="min_price">Минимальная цена:</label>
+        <input type="number" id="min_price" name="min_price" value="{% if min_price %}{{ min_price }}{% endif %}">
 
-                <button type="submit">Фильтровать</button>
-            </form>
+        <label for="max_price">Максимальная цена:</label>
+        <input type="number" id="max_price" name="max_price" value="{% if max_price %}{{ max_price }}{% endif %}">
 
-            
-            {% if error %}
-                <div class="alert alert-danger" role="alert">
-                {{ error }}
-                </div>
-            {% endif %}
-                </div>
+        <button type="submit">Фильтровать</button>
+      </form>
 
-        <div class="row">
-            {% for product in products %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        {% else %}
-                            None
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.description|truncatewords:20 }}</p>
-                            <p class="card-text">Цена: {{ product.price }}</p>
-                            <p class="card-text">Количество: {{ product.stock }}</p>
-                            <p class="card-text">Продавец: {{ product.user }}</p>
-
-                            {% if user.is_authenticated %}
-                            <a href="{% url 'add_product_in_cart' id=product.id %}" class="btn btn-primary">Добавить в корзину</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% if user.is_authenticated and user.is_staff %}  {# Правильная проверка прав #}
-                    <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар (Admin)</a>  {# Кнопка удаления для каждого товара #}
-                {% endif %}
-                {% if request.user == product.user %}  {# Правильная проверка прав #}
-                    <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар из обьявлений</a>  {# Кнопка удаления для каждого товара #}
-                {% endif %}
-
-            {% empty %}
-                <p>В этой категории пока нет товаров.</p>
-            {% endfor %}
+      {# Сообщение об ошибке #}
+      {% if error %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
         </div>
-
-        {% if user.is_authenticated %}
-        <a href="{% url 'add_product' id=category.id %}" class="btn btn-success">Добавить товар</a>  {# Кнопка добавления вне цикла #}
-        {% endif %}
-
-
+      {% endif %}
     </div>
+
+    {# Сетка товаров #}
+    <div class="row">
+      {% for product in products %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+              <p class="card-text">Цена: {{ product.price }}</p>
+              <p class="card-text">Количество: {{ product.stock }}</p>
+              <p class="card-text">Продавец: {{ product.user }}</p>
+
+              {# Кнопка "Добавить в корзину" #}
+              {% if user.is_authenticated %}
+                <a href="{% url 'add_product_in_cart' id=product.id %}" class="btn btn-primary mt-auto">Добавить в корзину</a>
+              {% endif %}
+            </div>
+          </div>
+          {# Кнопка "Удалить товар (Admin)" #}
+          {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар (Admin)</a>
+          {% endif %}
+          {# Кнопка "Удалить товар из обьявлений (для продавца)" #}
+          {% if request.user == product.user %}
+            <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар из обьявлений</a>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="no-products">В этой категории пока нет товаров.</p>
+      {% endfor %}
+      {% if user.is_authenticated %}
+      <a href="{% url 'add_product' id=category.id %}" class="btn btn-success">Добавить товар</a>  {# Кнопка добавления вне цикла #}
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

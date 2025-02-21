@@ -2,59 +2,66 @@
 
 {% block title %}Главная страница - Ваш магазин{% endblock %}
 
-{% block content %}
-    <div class="container">
-        <h1>Категории товаров</h1>
 
-        <form action="{% url 'search_results' %}" method="get" class="mb-3">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Поиск товаров..." name="q" value="{{ query }}">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">Поиск</button>
-                </div>
-            </div>
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Категории товаров</h1>
+
+        {# Форма поиска #}
+        <form action="{% url 'search_results' %}" method="get" class="search-form">
+            <input type="text" class="search-input" placeholder="Поиск товаров..." name="q" value="{{ query }}">
         </form>
 
+        {# Сетка категорий #}
         <div class="row">
             {% for category in categories %}
-            {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'delete_category' id=category.id %}" class="btn btn-primary">Удалить категорию</a>
-            {% endif %}
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-img-wrapper">  {# Обертка для изображения #}
+                    <div class="category-card h-100">
+                        <div class="category-image-wrapper">
                             {% if category.image %}
-                                <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
+                                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
                             {% else %}
-                                None
+                                 <div class="no-image-placeholder rounded">No Image</div>
                             {% endif %}
                         </div>
-                        <div class="card-body">
-                            <a href="{% url 'category_products' id=category.id %}" class="card-title">{{ category.name }}</a>
-                            <p class="card-text">{{ category.description|truncatewords:20 }}</p>
+                        <div class="category-body">
+                            <h5 class="category-title">
+                                <a href="{% url 'category_products' id=category.id %}" class="text-decoration-none text-dark">{{ category.name }}</a>
+                            </h5>
+                            <p class="category-description">{{ category.description|truncatewords:20 }}</p>
+                            {% if user.is_authenticated and user.is_staff %}
+                                <form method="post" action="{% url 'delete_category' id=category.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-
             {% empty %}
-                <p>Нет доступных категорий.</p>
+                <div class="col-12 text-center">
+                    <p>Нет доступных категорий.</p>
+                </div>
             {% endfor %}
         </div>
-        {% if user.is_authenticated and user.is_staff %}
-        {% if show_form %}
-        <div class="container">
-            <h1>Добавить категорию</h1>
 
-            <form method="post" enctype="multipart/form-data" action="{% url 'add_category' %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-                <a href="{% url 'home' %}" class="btn btn-secondary">Отмена</a>
-            </form>
-        </div>
-        {% else %}
-            <a href="{% url 'add_category' %}?add_category=True" class="btn btn-primary">Добавить категорию</a>
+        {# Форма добавления категории (только для администраторов) #}
+        {% if user.is_authenticated and user.is_staff %}
+            {% if show_form %}
+                <div class="add-category-form">
+                    <h2 class="mb-4">Добавить категорию</h2>
+                    <form method="post" enctype="multipart/form-data" action="{% url 'add_category' %}">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Отмена</a>
+                    </form>
+                </div>
+            {% else %}
+                <div class="text-center mt-4">
+                    <a href="{% url 'add_category' %}?add_category=True" class="btn btn-primary">Добавить категорию</a>
+                </div>
+            {% endif %}
         {% endif %}
-     {% endif %}
     </div>
 {% endblock %}

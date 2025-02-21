@@ -109,9 +109,8 @@ def add_product(request, id):
 
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)
-    if request.user == product.user:
-        product.delete()
-        return redirect('category_products', id = product.category.id)
+    product.delete()
+    return redirect('category_products', id = product.category.id)
 
 @login_required   
 def cart(request):
