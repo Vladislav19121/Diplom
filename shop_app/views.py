@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate, logout
-from .forms import ProductForm
+from .forms import ProductForm, CategoryForm
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,  user_passes_test
+
+def is_admin(user):
+    return user.is_staff
 
 def registration(request):
     if request.method == 'POST':
@@ -43,15 +46,55 @@ def home(request):
     categories = Category.objects.all()
     return render(request, 'home.html', {'categories': categories})
 
+@login_required
+@user_passes_test(is_admin)
+def add_category(request):
+    categories = Category.objects.all()
+    show_form = False
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            category = form.save()
+            category.save()
+            return redirect('home')
+    else:
+        form = CategoryForm()
+        if 'add_category' in request.GET:  
+            show_form = True
+
+    return render(request, 'home.html', {'categories': categories, 'form': form, 'show_form': show_form})
+
+@login_required
+@user_passes_test(is_admin)
+def delete_category(request, id):
+    category = get_object_or_404(Category, id=id)
+    category.delete()
+    return redirect('home')
+
 def open_category(request, id):
     category = get_object_or_404(Category, id=id)
     products = category.products.all()
-    return render(request, 'category_products.html', {'products': products, 'category': category})
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    error_message = None
+    try:
+        if min_price:
+            min_price = float(min_price)
+            products = products.filter(price__gte=min_price) #Это "look-up" (поиск) в Django ORM. Он означает "greater than or equal to" (больше или равно).
+        if max_price:
+            max_price = float(max_price)
+            products = products.filter(price__lte=max_price) #less than or equal to
+    except ValueError:
+        error_message = "Пожалуйста, введите корректные числовые значения для цены."
 
+    if min_price and max_price and min_price > max_price:
+        error_message = "Минимальная цена не может быть больше максимальной."
+    return render(request, 'category_products.html', {'products': products, 'category': category, 
+                                                          'min_price': min_price, 'max_price': max_price, 'error': error_message})
 @login_required
 def add_product(request, id):
     category = get_object_or_404(Category, id=id)
-    if request.method == 'POST':
+    if request.method == 'POST':    
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
@@ -104,3 +147,5 @@ def search_results(request):
         )
 
     return render(request, 'search_results.html', {'query': query, 'product_results': product_results})
+
+

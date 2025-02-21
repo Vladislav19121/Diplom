@@ -5,6 +5,24 @@
 {% block content %}
     <div class="container">
         <h1>Товары из категории "{{ category.name }}"</h1>
+        <h2>Фильтры</h2>
+            <form method="get" action="{% url 'category_products' id=category.id %}">
+                <label for="min_price">Минимальная цена:</label>
+                <input type="number" id="min_price" name="min_price" value="{% if min_price %}{{ min_price }}{% endif %}">
+
+                <label for="max_price">Максимальная цена:</label>
+                <input type="number" id="max_price" name="max_price" value="{% if max_price %}{{ max_price }}{% endif %}">
+
+                <button type="submit">Фильтровать</button>
+            </form>
+
+            
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                {{ error }}
+                </div>
+            {% endif %}
+                </div>
 
         <div class="row">
             {% for product in products %}

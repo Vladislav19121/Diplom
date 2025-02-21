@@ -17,6 +17,9 @@
 
         <div class="row">
             {% for category in categories %}
+            {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'delete_category' id=category.id %}" class="btn btn-primary">Удалить категорию</a>
+            {% endif %}
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-img-wrapper">  {# Обертка для изображения #}
@@ -32,9 +35,26 @@
                         </div>
                     </div>
                 </div>
+
             {% empty %}
                 <p>Нет доступных категорий.</p>
             {% endfor %}
         </div>
+        {% if user.is_authenticated and user.is_staff %}
+        {% if show_form %}
+        <div class="container">
+            <h1>Добавить категорию</h1>
+
+            <form method="post" enctype="multipart/form-data" action="{% url 'add_category' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+        {% else %}
+            <a href="{% url 'add_category' %}?add_category=True" class="btn btn-primary">Добавить категорию</a>
+        {% endif %}
+     {% endif %}
     </div>
 {% endblock %}
