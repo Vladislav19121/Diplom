@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate, logout
-from .forms import ProductForm, CategoryForm
+from .forms import ProductForm, CategoryForm, DiscountForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required,  user_passes_test
 
@@ -70,6 +70,33 @@ def delete_category(request, id):
     category = get_object_or_404(Category, id=id)
     category.delete()
     return redirect('home')
+
+@login_required
+@user_passes_test(is_admin)
+def add_discount(request, id):
+    product = get_object_or_404(Product, id=id)
+
+    if request.method == 'POST':
+        form = DiscountForm(request.POST)
+        if form.is_valid():
+            discount_value = form.cleaned_data['discount']
+            product.discount = discount_value
+            product.save()
+            return redirect('category_products', id=product.category.id)
+    else:
+        form = DiscountForm()
+
+    
+    return render(request, 'add_discount.html', {'form': form, 'product': product})
+
+@login_required
+@user_passes_test(is_admin)
+def delete_discount(request, id):
+    product = get_object_or_404(Product, id=id)
+    product.discount = 0.00
+    product.save()
+    return redirect('category_products', id=product.category.id)
+
 
 def open_category(request, id):
     category = get_object_or_404(Category, id=id)

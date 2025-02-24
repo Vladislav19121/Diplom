@@ -23,10 +23,11 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название товара')
     description = models.TextField(blank=True, verbose_name="Описание товара")
-    price = models.FloatField(max_length=10, verbose_name='Цена')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/',  blank=True, null=True, verbose_name="Изображение товара")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Категория")
+    discount = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)
     stock = models.IntegerField(default=0, verbose_name="Количество на складе")
     is_available = models.BooleanField(default=True, verbose_name="В наличии")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -38,6 +39,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def discounted_price(self):
+        return self.price * (1 - self.discount)
+    
+    def discount_percent(self):
+        return self.discount * 100
     
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cart', verbose_name="Продукт из корзины")

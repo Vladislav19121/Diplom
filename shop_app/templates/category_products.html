@@ -43,7 +43,10 @@
               <p class="card-text">Цена: {{ product.price }}</p>
               <p class="card-text">Количество: {{ product.stock }}</p>
               <p class="card-text">Продавец: {{ product.user }}</p>
-
+              {% if product.discount > 0 %}
+              <p class="card-text">Скидка: {{ product.discount_percent}} %</p>
+              <p class="card-text">Цена со скидкой: {{ product.discounted_price|floatformat:2}}</p>
+              {% endif %}
               {# Кнопка "Добавить в корзину" #}
               {% if user.is_authenticated %}
                 <a href="{% url 'add_product_in_cart' id=product.id %}" class="btn btn-primary mt-auto">Добавить в корзину</a>
@@ -53,6 +56,12 @@
           {# Кнопка "Удалить товар (Admin)" #}
           {% if user.is_authenticated and user.is_staff %}
             <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар (Admin)</a>
+          {% endif %}
+          {% if request.user == product.user %}
+          <a href="{% url 'add_discount' id=product.id %}" class="btn btn-danger">Добавить скидку (Admin)</a>
+          {% endif %}
+          {% if request.user == product.user %}
+          <a href="{% url 'delete_discount' id=product.id %}" class="btn btn-danger">Удалить скидку (Admin)</a>
           {% endif %}
           {# Кнопка "Удалить товар из обьявлений (для продавца)" #}
           {% if request.user == product.user %}

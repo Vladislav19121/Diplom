@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Добавить скидку для товара: {{ product.name }}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить скидку</button>
+    <a href="{% url 'category_products' id=product.category.id %}">Отмена</a>  <!--  Исправлено -->
+  </form>
+{% endblock %}
