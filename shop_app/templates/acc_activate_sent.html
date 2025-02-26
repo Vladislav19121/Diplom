@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Активация{% endblock %}
+
+{% block content %}
+    <h1>Сообщение отправлено на вашу почту {{ email }}</h1>
+    <p>Проверьте свою почту на одном из этих сервисов:</p>
+<ul>
+    <li><a href="https://mail.google.com/">Gmail</a></li>
+    <li><a href="https://outlook.live.com/">Outlook.com</a></li>
+    <li><a href="https://mail.yahoo.com/">Yahoo! Mail</a></li>
+</ul>
+{% endblock %}

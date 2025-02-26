@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}Ваш профиль{% endblock %}
+
+{% block content %}
+<ul>
+    <li><a href="{% url 'cart' %}" class="btn btn-danger">Моя корзина</a></li>
+    <li><a href="#" class="btn btn-danger">Мои покупки</a></li>
+</ul>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block title %}Fail{% endblock %}
+
+{% block content %}
+    <p>Увы, что-то пошло не так..</p>
+    <p><a href="{% url 'home' %}" class="btn btn-danger">На главную</a></p>
+{% endblock %}

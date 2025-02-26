@@ -5,9 +5,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('activation/<str:uidb64>/<str:token>/', views.activate, name='activate'),
     path('login/', views.login_view, name = 'login'),
     path('logout/', views.logout_view, name = 'logout'),
     path('registration/', views.registration, name='registration'),
+    path('user_page/<int:id>', views.user_page, name='user_page'),
     path('category/<int:id>/', views.open_category, name='category_products'),
     path('add_product/<int:id>/', views.add_product, name='add_product'),
     path('delete_product/<int:id>/', views.delete_product, name='delete_product'),

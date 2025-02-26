@@ -2,26 +2,65 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate, logout
-from .forms import ProductForm, CategoryForm, DiscountForm
-from django.contrib.auth.forms import UserCreationForm
+from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm
 from django.contrib.auth.decorators import login_required,  user_passes_test
+
+
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 
 def is_admin(user):
     return user.is_staff
 
+@csrf_exempt
 def registration(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            if user:
-                login(request, user)
-                return redirect('home')
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+
+            current_site = get_current_site(request)
+            mail_subject = 'Активировать ваш аккаунт'
+            message = render_to_string('acc_activate_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+
+
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(mail_subject, message, to=[to_email])
+            email.send()
+            return render (request, 'acc_activate_sent.html', {'email': to_email})
     else:
-        form = UserCreationForm()
-        
+        form = RegistrationForm()
+
+    return render (request, 'register.html', {'form': form})
     
-    return render(request, 'register.html', {'form': form})
+def activate(request, uidb64, token):
+    try:
+        print("Функция activate вызвана!")
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        print(f'Раскодированный юид: {uid}')
+        user = User.objects.get(pk=uid)
+
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        return render(request, 'acc_active_success.html')
+    else:
+        return render(request, 'acc_active_fail.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -45,6 +84,11 @@ def logout_view(request):
 def home(request):
     categories = Category.objects.all()
     return render(request, 'home.html', {'categories': categories})
+
+def user_page(request, id):
+    user = get_object_or_404(User, id=id)
+    show_button = True
+    return render(request, 'user_page.html', {'show_button': show_button})
 
 @login_required
 @user_passes_test(is_admin)
@@ -174,4 +218,5 @@ def search_results(request):
 
     return render(request, 'search_results.html', {'query': query, 'product_results': product_results})
 
-
+def buy_product(request, id):
+    pass

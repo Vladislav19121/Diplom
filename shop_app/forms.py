@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from django.contrib.auth.forms import UserCreationForm
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -17,3 +18,10 @@ class DiscountForm(forms.Form):
         decimal_places=2,
         label="Скидка"
     )
+
+class RegistrationForm(UserCreationForm):
+    email = forms.EmailField(max_length=254,
+                             help_text='Введите свой email')
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
