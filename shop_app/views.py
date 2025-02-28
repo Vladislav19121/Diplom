@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate, logout
-from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm
+from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm, BuyingForm
 from django.contrib.auth.decorators import login_required,  user_passes_test
+from django.contrib import messages
 
 
 from django.utils.encoding import force_bytes, force_str
@@ -46,10 +47,11 @@ def registration(request):
     
 def activate(request, uidb64, token):
     try:
-        print("Функция activate вызвана!")
+        print(f"Функция activate вызвана!" )
         uid = force_str(urlsafe_base64_decode(uidb64))
         print(f'Раскодированный юид: {uid}')
         user = User.objects.get(pk=uid)
+
 
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
@@ -186,6 +188,9 @@ def delete_product(request, id):
 @login_required   
 def cart(request):
     cart_products = Cart.objects.filter(user=request.user).order_by('added_at')
+    print("Содержимое корзины:")
+    for item in cart_products:
+        print(f"ID: {item.id}, Product: {item.product.name}, Quantity: {item.quantity}")
     total = sum(product.total_price() for product in cart_products)
     return render(request, 'cart.html', {'cart_products': cart_products, 'total': total})
 
@@ -201,10 +206,13 @@ def add_product_in_cart(request, id):
         return redirect('category_products', id = product.category.id)
 
 @login_required   
-def remove_form_cart(request, cart_product_id):
-    cart_product = get_object_or_404(Cart, id=cart_product_id, user=request.user)
-    cart_product.delete()
+def remove_form_cart(request, id):
+    cart_item = get_object_or_404(Cart, id=id, user=request.user)
+    cart_item.delete()
     return redirect('cart')
+
+
+
 
 def search_results(request):
     query = request.GET.get('q')
@@ -219,4 +227,19 @@ def search_results(request):
     return render(request, 'search_results.html', {'query': query, 'product_results': product_results})
 
 def buy_product(request, id):
-    pass
+    product = get_object_or_404(Product, id =id)
+    if request.method == 'POST':
+        form = BuyingForm(product, request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data['quantity']
+            product.stock -= quantity
+            product.save()
+            bought_product = form.save()
+            bought_product.save()
+            return redirect('cart')
+        
+    else:
+        form = BuyingForm()
+
+    return render (request, 'buy_product.html', {'form': form})
+

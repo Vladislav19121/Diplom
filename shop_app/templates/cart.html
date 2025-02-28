@@ -19,13 +19,14 @@
                 <tr>
                     <td>
                         <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="50">
-                        {{ item.product.name }}
+                        {{ item.id }}
                     </td>
                     <td>{{ item.product.price }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.total_price }}</td>
                     <td>
-                        <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                        <a href="{% url 'remove_from_cart' id=item.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                        <a href="{% url 'buy_product' item.product.id %}" class="btn btn-primary mt-auto">Купить</a>
                     </td>
                 </tr>
                 {% endfor %}

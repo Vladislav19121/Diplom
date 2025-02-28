@@ -15,13 +15,14 @@ urlpatterns = [
     path('delete_product/<int:id>/', views.delete_product, name='delete_product'),
     path('cart/', views.cart, name='cart'),
     path('add_product_in_cart/<int:id>', views.add_product_in_cart, name='add_product_in_cart'),
-    path('remove_from_cart/<int:cart_product_id>', views.remove_form_cart, name='remove_from_cart'),
+    path('remove_from_cart/<int:id>', views.remove_form_cart, name='remove_from_cart'),
     path('search/', views.search_results, name='search_results'),
     path('add_category', views.add_category, name='add_category'),
     path('delete_category/<int:id>/', views.delete_category, name='delete_category'),
     path('add-discount/<int:id>/', views.add_discount, name='add_discount'),
-    path('delete-discount/<int:id>/', views.delete_discount, name='delete_discount')
-]
+    path('delete-discount/<int:id>/', views.delete_discount, name='delete_discount'),
+    path('buy_product/<int:id>/', views.buy_product, name='buy_product'),
+]   
 
 
 if settings.DEBUG:
