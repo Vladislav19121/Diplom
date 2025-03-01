@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Заказы{% endblock %}
+
+{% block content %}
+    <h1>Мои заказы</h1>
+    {% for order in orders %}
+        <ul>
+            <li>{{ order.product }}</li>
+            <li>{{ order.product.user }}</li>
+            <li>{{ order.quantity_product }}</li>
+            <li>{{ order.price }}</li>
+        </ul>
+    {% endfor %}
+
+    <h2>{{ total }} - Сумма всех заказов</h2>
+{% endblock %}

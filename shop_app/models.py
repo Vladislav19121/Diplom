@@ -62,5 +62,25 @@ class Cart(models.Model):
 
     def total_price(self):
         return self.quantity * self.product.price
+    
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order', verbose_name='Продукт для заказа')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quantity_product = models.PositiveIntegerField(verbose_name="Количество товара")
+    address = models.TextField()
+    tel_number = models.CharField(verbose_name='Номер телефона', max_length=20)
 
-        
+    PAYMENT_METHODS = (
+        ('cash', 'Наличными при получении'),
+        ('card', 'Банковской картой'),
+    )
+
+    payment = models.CharField(verbose_name='Способ оплаты', choices=PAYMENT_METHODS, default='cash', max_length=100)
+    comment = models.CharField(max_length=255, verbose_name='Комментарий к заказу')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена заказа')
+
+    def __str__(self):
+        return f"Заказ #{self.pk} - {self.product.name} ({self.quantity_product})"
+    
+    def total_price(self):
+        return self.price

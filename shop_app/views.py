@@ -226,20 +226,41 @@ def search_results(request):
 
     return render(request, 'search_results.html', {'query': query, 'product_results': product_results})
 
-def buy_product(request, id):
-    product = get_object_or_404(Product, id =id)
+def order_product(request, id):
+    product = get_object_or_404(Product, id=id)
+    calculated_price = product.price + 100
     if request.method == 'POST':
-        form = BuyingForm(product, request.POST)
+        form = BuyingForm(request.POST)
         if form.is_valid():
-            quantity = form.cleaned_data['quantity']
-            product.stock -= quantity
-            product.save()
-            bought_product = form.save()
-            bought_product.save()
-            return redirect('cart')
-        
+            quantity = form.cleaned_data['quantity_product']
+            calculated_price = product.price * quantity + 1000
+            if quantity <= product.stock:
+                order = form.save(commit=False)
+                order.product = product
+                order.user = request.user
+                order.price = calculated_price 
+                product.stock -= quantity
+                product.save()           
+                order.save()
+                
+                cart_items = Cart.objects.filter(product=product, user=request.user)
+                for item in cart_items:
+                    item.delete()
+
+                return redirect('cart')
+            
+            else:
+                messages.error(request, f'Вы не можете заказать больше {product.stock} {product.name}')
+                return render(request, 'buy_product.html', {'form': form, 'calculated_price': calculated_price, 'product': product})
+        else:
+            messages.error(request, "Ошибка в форме. Проверьте введенные данные.")
+            return render(request, 'buy_product.html', {'form': form, 'product': product})
     else:
         form = BuyingForm()
 
-    return render (request, 'buy_product.html', {'form': form})
+    return render(request, 'buy_product.html', {'form': form, 'product': product, 'calculated_price': calculated_price})
 
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user)
+    total = sum(order.total_price() for order in orders)
+    return render(request, 'orders.html', {'orders': orders, 'total': total})
