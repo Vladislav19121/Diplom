@@ -25,10 +25,11 @@ class Product(models.Model):
     description = models.TextField(blank=True, verbose_name="Описание товара")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tel_number = models.CharField(max_length=20, verbose_name='Номер телефона')
     image = models.ImageField(upload_to='products/',  blank=True, null=True, verbose_name="Изображение товара")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Категория")
     discount = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)
-    stock = models.IntegerField(default=0, verbose_name="Количество на складе")
+    stock = models.IntegerField(default=0, verbose_name="Количество")
     is_available = models.BooleanField(default=True, verbose_name="В наличии")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
@@ -75,10 +76,22 @@ class Order(models.Model):
         ('card', 'Банковской картой'),
     )
 
+    STATUS_CHOICES = (
+        ('queue', 'Ваш заказ в очереди'),
+        ('on_the_way', 'Заказ уже на пути к вам'),
+        ('arrived', 'Курьер приехал, готов отдать заказ'),
+    )
+
+    status = models.CharField(verbose_name='Статус заказа', choices = STATUS_CHOICES, default='queue', max_length=150)
     payment = models.CharField(verbose_name='Способ оплаты', choices=PAYMENT_METHODS, default='cash', max_length=100)
     comment = models.CharField(max_length=255, verbose_name='Комментарий к заказу')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена заказа')
 
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+        ordering = ['id']
+    
     def __str__(self):
         return f"Заказ #{self.pk} - {self.product.name} ({self.quantity_product})"
     

@@ -7,11 +7,18 @@
     {% for order in orders %}
         <ul>
             <li>{{ order.product }}</li>
-            <li>{{ order.product.user }}</li>
-            <li>{{ order.quantity_product }}</li>
-            <li>{{ order.price }}</li>
+            <li>Продавец - {{ order.product.user }}</li>
+            <li>Номер продавца - {{ order.product.tel_number }}</li>
+            <li>Количество - {{ order.quantity_product }}</li>
+            <li>Цена - {{ order.price }} руб.</li>
+            <li>Статус заказа - {{ order.get_status_display }}</li>
         </ul>
+
+        <a href="{% url 'delete_order' id=order.id %}" class="btn btn-danger">Отменить заказ</a>
+        {% if user.is_staff %}
+        <a href="{% url 'change_status' id=order.id %}" class="btn btn-danger">Изменить статус заказа</a>
+        {% endif %}
     {% endfor %}
 
-    <h2>{{ total }} - Сумма всех заказов</h2>
+    <h2>{{ total }} руб. - Сумма всех заказов</h2>
 {% endblock %}

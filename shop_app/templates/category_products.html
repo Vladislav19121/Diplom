@@ -38,10 +38,14 @@
               <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
             {% endif %}
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+              <h3 class="card-title">{{ product.name }}</h3>
+              <p class="card-text">Описание: {{ product.description|truncatewords:20 }}</p>
               <p class="card-text">Цена: {{ product.price }}</p>
+              {% if product.stock > 0 %}
               <p class="card-text">Количество: {{ product.stock }}</p>
+              {% else %}
+              <p>К сожалению, на данный момент этот товар отсутствует</p>
+              {% endif %}
               <p class="card-text">Продавец: {{ product.user }}</p>
               {% if product.discount > 0 %}
               <p class="card-text">Скидка: {{ product.discount_percent}} %</p>
@@ -49,7 +53,9 @@
               {% endif %}
               {# Кнопка "Добавить в корзину" #}
               {% if user.is_authenticated %}
+              {% if product.stock > 0 %}
                 <a href="{% url 'add_product_in_cart' id=product.id %}" class="btn btn-primary mt-auto">Добавить в корзину</a>
+              {% endif %}
               {% endif %}
             </div>
           </div>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate, logout
-from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm, BuyingForm
+from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm, BuyingForm, OrderStatusForm
 from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
 
@@ -247,10 +247,10 @@ def order_product(request, id):
                 for item in cart_items:
                     item.delete()
 
-                return redirect('cart')
+                return redirect('orders')
             
             else:
-                messages.error(request, f'Вы не можете заказать больше {product.stock} {product.name}')
+                messages.error(request, f'Вы не можете заказать больше {product.stock} {product.name}, т.к на складе столько нет')
                 return render(request, 'buy_product.html', {'form': form, 'calculated_price': calculated_price, 'product': product})
         else:
             messages.error(request, "Ошибка в форме. Проверьте введенные данные.")
@@ -264,3 +264,23 @@ def my_orders(request):
     orders = Order.objects.filter(user=request.user)
     total = sum(order.total_price() for order in orders)
     return render(request, 'orders.html', {'orders': orders, 'total': total})
+
+def delete_order(request, id):
+    order = get_object_or_404(Order, id=id, user=request.user)
+    order.delete()
+    return redirect('orders')
+
+def change_status(request, id):
+    order = get_object_or_404(Order, id=id)
+    form = OrderStatusForm(instance=order)
+    if request.method == 'POST':
+        form = OrderStatusForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect('orders')
+        else:
+            messages.error(request, "Ошибка в форме. Проверьте введенные данные.")
+            return render(request, 'orders.html', {'form': form, 'order': order})
+        
+    return render(request, 'change_status.html', {'form': form, 'order': order})
+

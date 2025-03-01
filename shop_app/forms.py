@@ -31,3 +31,8 @@ class BuyingForm(forms.ModelForm):
         model = Order
         fields = ['quantity_product', 'address', 'tel_number', 'payment', 'comment']
 
+class OrderStatusForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['status']
+
