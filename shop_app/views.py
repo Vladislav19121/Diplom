@@ -284,3 +284,24 @@ def change_status(request, id):
         
     return render(request, 'change_status.html', {'form': form, 'order': order})
 
+def change_announcement(request, id):
+    announcement = get_object_or_404(Product, id=id)
+    form = ProductForm(instance=announcement)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=announcement)
+        if form.is_valid():
+            form.save()
+            return redirect('category_products', id=announcement.category.id)
+        else:
+            messages.error(request, "Ошибка в форме. Проверьте введенные данные.")
+            return render(request, 'orders.html', {'form': form, 'announcement': announcement})
+        
+    return render(request, 'change_announcement.html', {'form': form, 'announcement': announcement})
+
+def my_announcements(request):
+    announcements = Product.objects.filter(user=request.user)
+    return render(request, 'my_announcements.html', {'announcements': announcements})
+
+def product_annoucnement(request, id):
+    product = get_object_or_404(Product, id=id)
+    return render(request, 'product_announcement.html', {'product': product})

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои обьявления{% endblock %}
+
+{% block content %}
+    {% for announcement in announcements %}
+        <ul>
+            <img src="{{ announcement.image.url }}" class="card-img-top" alt="{{ announcement.name }}">
+            <li>Товар - {{announcement.name}}</li>
+            <li>Цена - {{announcement.price}}</li>
+        </ul>
+    {% endfor %}
+
+{% endblock %}

@@ -28,6 +28,28 @@ class Product(models.Model):
     tel_number = models.CharField(max_length=20, verbose_name='Номер телефона')
     image = models.ImageField(upload_to='products/',  blank=True, null=True, verbose_name="Изображение товара")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Категория")
+
+    CITY_CHOICES = (
+    ('minsk', 'Минск'),         
+    ('gomel', 'Гомель'),         
+    ('brest', 'Брест'),         
+    ('vitebsk', 'Витебск'),       
+    ('grodno', 'Гродно'),         
+    ('mogilev', 'Могилёв'),       
+    ('bobruisk', 'Бобруйск'),     
+    ('baranovichi', 'Барановичи'),
+    ('borisov', 'Борисов'),      
+    ('pinsk', 'Пинск'),         
+    ('orsha', 'Орша'),          
+    ('mozyr', 'Мозырь'),         
+    ('soligorsk', 'Солигорск'),    
+    ('novopolotsk', 'Новополоцк'),
+    ('molodechno', 'Молодечно'),  
+    ('lida', 'Лида'),            
+    ('mazyr', 'Мазыр'),
+    )
+
+    city = models.CharField(max_length=100, choices=CITY_CHOICES, verbose_name='Город')
     discount = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)
     stock = models.IntegerField(default=0, verbose_name="Количество")
     is_available = models.BooleanField(default=True, verbose_name="В наличии")

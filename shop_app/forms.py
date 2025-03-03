@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'stock', 'discount']
+        fields = ['name', 'description', 'city', 'price', 'image', 'category', 'stock', 'discount']
     
 class CategoryForm(forms.ModelForm):
     class Meta:

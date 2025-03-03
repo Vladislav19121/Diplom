@@ -24,7 +24,10 @@ urlpatterns = [
     path('buy_product/<int:id>/', views.order_product, name='buy_product'),
     path('your-orders', views.my_orders, name='orders'),
     path('delete-order/<int:id>/', views.delete_order, name='delete_order'),
-    path('change-status/<int:id>/', views.change_status, name='change_status')
+    path('change-status/<int:id>/', views.change_status, name='change_status'),
+    path('change_announcement/<int:id>', views.change_announcement, name='change_announcement'),
+    path('my_announcements/', views.my_announcements, name='my_announcements'),
+    path('product_announcement/<int:id>/', views.product_annoucnement, name='product_announcement')
 ]   
 
 

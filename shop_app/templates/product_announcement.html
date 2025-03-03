@@ -1,0 +1,60 @@
+{% block title %}Объявление о товаре: {{ product.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <p>К сожалению, на данный момент фотография недоступна</p>
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title">{{ product.name }}</h2>
+                        <p class="card-text"><strong>Описание:</strong> {{ product.description|default:"Нет описания" }}</p>
+                        <p class="card-text"><strong>Цена:</strong> {{ product.price }} руб.</p>
+                        <p class="card-text"><strong>Продавец:</strong> {{ product.user.username }}</p>
+                        <p class="card-text"><strong>Номер телефона:</strong> {{ product.tel_number }}</p>
+                        <p class="card-text"><strong>Категория:</strong> {{ product.category.name }}</p>
+                        <p class="card-text"><strong>Город:</strong> {{ product.get_city_display }}</p>
+                        {% if product.discount > 0 %}
+                        <p class="card-text"><strong>Скидка:</strong> {{ product.discount_percent}} %</p>
+                        <p class="card-text"><strong>Цена со скидкой:</strong> {{ product.discounted_price|floatformat:2}}</p>
+                        {% endif %}
+                        <p class="card-text"><strong>В наличии:</strong>
+                            {% if product.is_available %}
+                                Да
+                            {% else %}
+                                Нет
+                            {% endif %}
+                        </p>
+                        {% if product.stock > 0 %}
+                        <p class="card-text"><strong>Количество:</strong> {{ product.stock }}</p>
+                        {% else %}
+                        <p>К сожалению, на данный момент этот товар отсутствует</p>
+                        {% endif %}
+                        <p class="card-text"><strong>Дата создания:</strong> {{ product.created_at|date:"d.m.Y H:i" }}</p>
+                        <a href="{% url 'home' %}" class="btn btn-primary">Вернуться на главную</a>
+                        {% if user.is_authenticated %}
+                        {% if product.stock > 0 %}
+                          <a href="{% url 'add_product_in_cart' id=product.id %}" class="btn btn-primary mt-auto">Добавить в корзину</a>
+                        {% endif %}
+                        {% endif %}
+                        {% if request.user == product.user %}
+                        <a href="{% url 'add_discount' id=product.id %}" class="btn btn-danger">Добавить скидку (Admin)</a>
+                        {% endif %}
+                        {% if request.user == product.user %}
+                        <a href="{% url 'delete_discount' id=product.id %}" class="btn btn-danger">Удалить скидку (Admin)</a>
+                        {% endif %}
+                        {% if request.user == product.user %}
+                        <a href="{% url 'change_announcement' id=product.id %}" class="btn btn-danger">Изменить обьявление</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
