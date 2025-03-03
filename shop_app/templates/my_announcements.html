@@ -9,6 +9,7 @@
             <li>Товар - {{announcement.name}}</li>
             <li>Цена - {{announcement.price}}</li>
         </ul>
+        <a href="{% url 'product_announcement' id=announcement.id %}" class ="btn btn-danger">Подробнее</a>
     {% endfor %}
 
 {% endblock %}

@@ -1,4 +1,4 @@
-{% block title %}Объявление о товаре: {{ product.name }}{% endblock %}
+{% block title %}<h1>{{ product.category.name }}</h1>{% endblock %}
 
 {% block content %}
 
@@ -24,16 +24,14 @@
                         <p class="card-text"><strong>Цена со скидкой:</strong> {{ product.discounted_price|floatformat:2}}</p>
                         {% endif %}
                         <p class="card-text"><strong>В наличии:</strong>
-                            {% if product.is_available %}
-                                Да
+                            {% if product.stock > 0 %}
+                                да
                             {% else %}
-                                Нет
+                                нет
                             {% endif %}
                         </p>
                         {% if product.stock > 0 %}
                         <p class="card-text"><strong>Количество:</strong> {{ product.stock }}</p>
-                        {% else %}
-                        <p>К сожалению, на данный момент этот товар отсутствует</p>
                         {% endif %}
                         <p class="card-text"><strong>Дата создания:</strong> {{ product.created_at|date:"d.m.Y H:i" }}</p>
                         <a href="{% url 'home' %}" class="btn btn-primary">Вернуться на главную</a>
