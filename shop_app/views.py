@@ -13,6 +13,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 
 def is_admin(user):
     return user.is_staff
@@ -246,6 +247,17 @@ def order_product(request, id):
                 cart_items = Cart.objects.filter(product=product, user=request.user)
                 for item in cart_items:
                     item.delete()
+                
+                subject = f'Вы сделали заказ {order.product.name}!'
+                message = render_to_string('order_email.html',{
+                    'order': order,
+                    'product': product,
+                    'quantity': quantity,
+                    'calculated_price': calculated_price,
+                })
+                from_email = 'pyshop1912@gmail.com'
+                recipient_list = ['pyshop1912@gmail.com', request.user.email]
+                send_mail(subject, message, from_email, recipient_list, html_message=message)
 
                 return redirect('orders')
             

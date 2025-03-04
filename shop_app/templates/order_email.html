@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение заказа</title>
+</head>
+<body>
+    <h1>Ваш заказ успешно оформлен!</h1>
+    <p>Номер заказа: {{ order.id }}</p>
+    <p>Товар: {{ product.name }}</p>
+    <p>Количество: {{ quantity }}</p>
+    <p>Сумма к оплате: {{ calculated_price }} руб.</p>
+    <p>Спасибо за ваш заказ!</p>
+</body>
+</html>
