@@ -29,7 +29,7 @@ def registration(request):
 
             current_site = get_current_site(request)
             mail_subject = 'Активировать ваш аккаунт'
-            message = render_to_string('acc_activate_email.html', {
+            message = render_to_string('email/acc_activate_email.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -248,8 +248,8 @@ def order_product(request, id):
                 for item in cart_items:
                     item.delete()
                 
-                subject = f'Вы сделали заказ {order.product.name}!'
-                message = render_to_string('order_email.html',{
+                subject = f'Вы заказали {order.product.name}!'
+                message = render_to_string('email/order_email.html',{
                     'order': order,
                     'product': product,
                     'quantity': quantity,
@@ -289,6 +289,15 @@ def change_status(request, id):
         form = OrderStatusForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
+
+            subject = f'Статус заказа #{order.id} изменен'
+            message = render_to_string('email/status_changed_email.html', {
+                'order': order,
+            })
+            from_email = 'pyshop1912@gmail.com'
+            recipient_list = [order.user.email]
+            send_mail(subject, message, from_email, recipient_list, html_message=message)
+
             return redirect('orders')
         else:
             messages.error(request, "Ошибка в форме. Проверьте введенные данные.")

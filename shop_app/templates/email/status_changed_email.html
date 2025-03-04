@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Изменение статуса заказа</title>
+</head>
+<body>
+    <h1>Статус вашего заказа изменен!</h1>
+    <p>Номер заказа: {{ order.id }}</p>
+    <p>Новый статус: {{ order.get_status_display }}</p>
+    <p>Спасибо за ваш заказ!</p>
+</body>
+</html>
