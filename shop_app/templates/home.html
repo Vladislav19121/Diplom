@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Главная страница - Ваш магазин{% endblock %}
 
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'home.css' %}">
     <div class="container mt-4">
         <h1 class="text-center mb-4">Категории товаров</h1>
 

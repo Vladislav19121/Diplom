@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Товары из категории {{ category.name }}{% endblock %}
 
-
-
 {% block content %}
+  <link rel="stylesheet" href="{% static 'category_products.css' %}">
   <div class="container">
     <h1>Товары из категории "{{ category.name }}"</h1>
 
@@ -41,23 +40,29 @@
               <h3 class="card-title">{{ product.name }}</h3>
               <p class="card-text">Город: {{ product.get_city_display }}</p>
             </div>
+            <div class="card-footer">
+              <a href="{% url 'product_announcement' id=product.id %}" class ="btn btn-danger">Подробнее</a>
+              {# Кнопка "Удалить товар (Admin)" #}
+              {% if user.is_authenticated and user.is_staff %}
+                <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар (Admin)</a>
+              {% endif %}
+              {# Кнопка "Удалить товар из обьявлений (для продавца)" #}
+              {% if request.user == product.user %}
+                <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар из обьявлений</a>
+              {% endif %}
+            </div>
           </div>
-          <a href="{% url 'product_announcement' id=product.id %}" class ="btn btn-danger">Подробнее</a>
-          {# Кнопка "Удалить товар (Admin)" #}
-          {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар (Admin)</a>
-          {% endif %}
-          {# Кнопка "Удалить товар из обьявлений (для продавца)" #}
-          {% if request.user == product.user %}
-            <a href="{% url 'delete_product' id=product.id %}" class="btn btn-danger">Удалить товар из обьявлений</a>
-          {% endif %}
         </div>
       {% empty %}
         <p class="no-products">В этой категории пока нет товаров.</p>
       {% endfor %}
-      {% if user.is_authenticated %}
-      <a href="{% url 'add_product' id=category.id %}" class="btn btn-success">Добавить обьявление</a>  {# Кнопка добавления вне цикла #}
-      {% endif %}
     </div>
   </div>
+
+  {# Кнопка добавления вне цикла #}
+  {% if user.is_authenticated %}
+  <div id="add-ad-button">
+    <a href="{% url 'add_product' id=category.id %}" class="btn btn-success">Добавить объявление</a>
+  </div>
+  {% endif %}
 {% endblock %}

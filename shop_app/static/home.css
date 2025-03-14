@@ -1,0 +1,215 @@
+/* Общие стили */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Заголовок */
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Форма поиска */
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-input:focus {
+    border-color: #007bff;
+}
+
+/* Сетка категорий */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Карточка категории */
+.category-card {
+    width: 100%;
+    max-width: 300px;
+    height: 380px; /* Одинаковая высота */
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Контейнер изображения */
+.category-image-wrapper {
+    width: 100%;
+    height: 220px; /* Фиксированная высота */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+}
+
+/* Изображение */
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Заполняет блок, сохраняя пропорции */
+}
+
+/* Заглушка для отсутствующего изображения */
+.no-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #ddd;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Тело карточки */
+.category-body {
+    padding: 15px;
+    text-align: center;
+    flex-grow: 1; /* Растягивает контент, чтобы карточки были одинаковыми */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Заголовок категории */
+.category-title a {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+}
+
+.category-title a:hover {
+    text-decoration: underline;
+}
+
+/* Описание категории */
+.category-description {
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+    flex-grow: 1; /* Растягивает текст, чтобы кнопки были внизу */
+}
+
+/* Кнопка удаления (только для админов) */
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-danger:hover {
+    background-color: #bd2130;
+}
+
+/* Форма добавления категории */
+.add-category-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    text-align: center;
+}
+
+.add-category-form h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+/* Поля формы */
+form input,
+form textarea,
+form select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Кнопка сохранения */
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .category-card {
+        max-width: 100%;
+    }
+
+    .category-image-wrapper {
+        height: 200px;
+    }
+
+    .search-input {
+        max-width: 100%;
+    }
+}
