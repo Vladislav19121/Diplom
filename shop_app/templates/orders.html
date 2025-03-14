@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Заказы{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'orders.css' %}">
     <h1>Мои заказы</h1>
     {% for order in orders %}
         <ul>

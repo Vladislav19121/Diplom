@@ -1,0 +1,91 @@
+/* Основные стили */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Заголовок страницы */
+h1, h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Стили для списка заказов */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+    text-align: left; /* Выровняем список влево */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+li {
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+/* Стили для кнопок */
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: #dc3545; /* Красный фон для кнопок */
+    border: 1px solid #dc3545;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    text-decoration: none; /* Убираем подчеркивание */
+    margin: 10px 0; /* Отступ снизу и сверху у кнопок */
+    width: 200px; /* Фиксированная ширина кнопок */
+    display: inline-block; /* Ставим кнопки в ряд */
+}
+
+.btn:hover {
+    background-color: #bd2130; /* Темно-красный фон при наведении */
+    border-color: #bd2130;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1, h2 {
+        font-size: 2rem;
+    }
+
+    li {
+        font-size: 0.875rem;
+        padding: 8px;
+    }
+
+    .btn {
+        width: 100%; /* Кнопки занимают всю ширину на маленьких экранах */
+    }
+}

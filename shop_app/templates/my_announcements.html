@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Мои обьявления{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'my_announcements.css' %}">
     {% for announcement in announcements %}
         <ul>
             <img src="{{ announcement.image.url }}" class="card-img-top" alt="{{ announcement.name }}">

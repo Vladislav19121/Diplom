@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{% static 'base.css' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Описание вашей страницы">
     <title>{% block title %}Сайт{% endblock %}</title>
     {% block styles %}
     {% endblock %}
@@ -12,35 +13,34 @@
 <body>
 
     <!-- Шапка сайта (Navigation Bar) -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">Главная</a>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выйти из аккаунта</a></li>
-                    </li>
-                    {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Войти в аккаунт</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Зарегистрироваться</a></li>
-                    {% endif %}
-                    {% if user.is_authenticated and not show_button %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'user_page' id=user.id %}">Моя страница</a></li>
-                    {% endif %}
-                    </li>
-                </ul>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="/">Главная</a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выйти из аккаунта</a></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Войти в аккаунт</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Зарегистрироваться</a></li>
+                        {% endif %}
+                        {% if user.is_authenticated and not show_button %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'user_page' id=user.id %}">Моя страница</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Основной контент страницы -->
-    <div class="container mt-4">
+    <main class="container mt-4">
         {% block content %}
             <h1>Привет!</h1>
             <p>Это базовый шаблон. Замените этот контент в дочерних шаблонах.</p>
         {% endblock %}
-    </div>
+    </main>
 
     <!-- Подвал сайта -->
     <footer class="bg-light text-center py-3 mt-5">

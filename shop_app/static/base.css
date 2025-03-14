@@ -17,19 +17,56 @@ body {
 .navbar {
     background-color: #007bff;
     border-bottom: 2px solid #0056b3;
+    padding: 0.5rem 0; /* Уменьшил общий padding панели */
 }
 
-.navbar .navbar-brand, .navbar .nav-link {
+.navbar .navbar-brand {
     color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-right: auto; /* Push brand to the left, buttons to the right */
+    margin-left: 1rem; /* Added to align brand to the left */
+}
+
+.navbar .navbar-nav {
+    margin-left: 0;
+    display: flex;
+    align-items: center; /* Vertically center items */
+    list-style-type: none; /* Убирает точки вокруг навигационных элементов */
+    padding-left: 0; /* Убирает отступ */
+}
+
+.navbar .nav-item {
+    margin-right: 0.5rem; /* Уменьшил отступ между кнопками */
+}
+
+.navbar .nav-link {
+    color: #fff;
+    font-size: 0.9rem; /* Уменьшил размер шрифта */
+    padding: 0.3rem 0.75rem; /* Уменьшил padding */
+    background-color: transparent; /* Make background transparent */
+    border: 1px solid #fff; /* Add a white border */
+    border-radius: 3px; /* Уменьшил радиус скругления */
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: none; /* Remove initial box shadow */
+    font-weight: bold; /* Make text bold */
+    outline: none; /* Убирает обводку при фокусировке */
 }
 
 .navbar .nav-link:hover {
-    color: #ddd;
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly darker background on hover */
+    color: #fff;
+    box-shadow: none; /* Remove box shadow on hover */
+    transform: translateY(-1px); /* Slightly lift button on hover */
 }
 
 /* Основной контент */
 .mt-4 {
-    margin-top: 1.5rem;
+    margin-top: 5.5rem; /* Adjusted for fixed navbar height */
 }
 
 h1 {
@@ -71,5 +108,15 @@ footer p {
 
     p {
         font-size: 0.875rem;
+    }
+    .nav-link {
+        text-decoration: none; /* Убирает точки вокруг ссылок */
+        outline: none; /* Убирает обводку при фокусировке */
+    }
+    .nav-link:focus {
+        outline: none; /* Убирает обводку при фокусировке */
+    }
+    .nav-item {
+        list-style-type: none; /* Убирает точки вокруг навигационных элементов */
     }
 }
