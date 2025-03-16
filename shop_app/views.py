@@ -150,6 +150,31 @@ def open_category(request, id):
     products = category.products.all()
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
+    city = request.GET.get('city')
+    cities = list(set(products.values_list('city', flat=True)))  # Убираем дубли
+    city_translations = {
+    'minsk': 'Минск',
+    'gomel': 'Гомель',
+    'brest': 'Брест',
+    'vitebsk': 'Витебск',
+    'grodno': 'Гродно',
+    'mogilev': 'Могилёв',
+    'bobruisk': 'Бобруйск',
+    'baranovichi': 'Барановичи',
+    'borisov': 'Борисов',
+    'pinsk': 'Пинск',
+    'orsha': 'Орша',
+    'mozyr': 'Мозырь',
+    'soligorsk': 'Солигорск',
+    'novopolotsk': 'Новополоцк',
+    'molodechno': 'Молодечно',
+    'lida': 'Лида',
+    'mazyr': 'Мазыр',
+    }
+
+    cities_translated = [
+        {'value': city, 'display': city_translations.get(city, city)} for city in cities
+    ]
     error_message = None
     try:
         if min_price:
@@ -157,14 +182,19 @@ def open_category(request, id):
             products = products.filter(price__gte=min_price) #Это "look-up" (поиск) в Django ORM. Он означает "greater than or equal to" (больше или равно).
         if max_price:
             max_price = float(max_price)
-            products = products.filter(price__lte=max_price) #less than or equal to
+            products = products.filter(price__lte=max_price)
+            
+        if city:
+           products = products.filter(city=city)
+            
     except ValueError:
         error_message = "Пожалуйста, введите корректные числовые значения для цены."
 
     if min_price and max_price and min_price > max_price:
         error_message = "Минимальная цена не может быть больше максимальной."
     return render(request, 'category_products.html', {'products': products, 'category': category, 
-                                                          'min_price': min_price, 'max_price': max_price, 'error': error_message})
+                                                          'min_price': min_price, 'max_price': max_price, 
+                                                          'cities': cities_translated, 'error': error_message})
 @login_required
 def add_product(request, id):
     category = get_object_or_404(Category, id=id)
