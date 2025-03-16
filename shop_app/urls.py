@@ -1,10 +1,18 @@
 from django.urls import path, include
-from . import views
 from django.conf.urls.static import static
 from django.conf import settings
+from . import views
+
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'categories', views.CategoryViewSet,  basename = 'categories'),
+router.register(r'products', views.ProductViewSet,  basename = 'products'),
+router.register(r'orders', views.OrderViewSet,  basename = 'orders')
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('api/', include(router.urls)),
     path('activation/<str:uidb64>/<str:token>/', views.activate, name='activate'),
     path('login/', views.login_view, name = 'login'),
     path('logout/', views.logout_view, name = 'logout'),

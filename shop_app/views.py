@@ -5,7 +5,10 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm, BuyingForm, OrderStatusForm
 from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
-
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import viewsets
+from .serializers import *
+from rest_framework import filters # Фильтрация
 
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -15,6 +18,40 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['category', 'price']
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'price'] 
+
+class OrderViewSet(viewsets.ModelViewSet):
+    serializer_class = OrderSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Order.objects.all()
+        else:
+            return Order.objects.filter(user=self.request.user)
+    
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
+    
 def is_admin(user):
     return user.is_staff
 
@@ -264,7 +301,7 @@ def order_product(request, id):
         form = BuyingForm(request.POST)
         if form.is_valid():
             quantity = form.cleaned_data['quantity_product']
-            calculated_price = product.price * quantity + 1000
+            calculated_price = product.price * quantity + 100
             if quantity <= product.stock:
                 order = form.save(commit=False)
                 order.product = product
@@ -306,6 +343,11 @@ def my_orders(request):
     orders = Order.objects.filter(user=request.user)
     total = sum(order.total_price() for order in orders)
     return render(request, 'orders.html', {'orders': orders, 'total': total})
+
+@user_passes_test(is_admin)
+def orders(request):
+    all_orders = Order.objects.all()
+    return render(request, 'orders.html', {'orders': all_orders})
 
 def delete_order(request, id):
     order = get_object_or_404(Order, id=id, user=request.user)
