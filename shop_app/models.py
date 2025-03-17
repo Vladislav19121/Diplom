@@ -50,7 +50,7 @@ class Product(models.Model):
     )
 
     city = models.CharField(max_length=100, choices=CITY_CHOICES, verbose_name='Город')
-    discount = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)
+    discount = models.DecimalField(max_digits=4, decimal_places=2, default=0)
     stock = models.IntegerField(default=0, verbose_name="Количество")
     is_available = models.BooleanField(default=True, verbose_name="В наличии")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -64,10 +64,10 @@ class Product(models.Model):
         return self.name
     
     def discounted_price(self):
-        return self.price * (1 - self.discount)
+        return self.price - (self.discount * self.price / 100)
     
     def discount_percent(self):
-        return self.discount * 100
+        return self.discount
     
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='cart', verbose_name="Продукт из корзины")

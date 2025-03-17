@@ -1,14 +1,37 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Добавить товар в категорию "{{ category.name }}"{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'add_product.css' %}">
     <div class="container">
         <h1>Добавить товар в категорию "{{ category.name }}"</h1>
 
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}  {# Отображаем форму в виде параграфов #}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+
+                    {% if field.name == 'discount' %}
+                        <div class="discount-field">
+                            {{ field }}
+                            <span class="percentage-sign">%</span>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="alert alert-danger">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
             <button type="submit" class="btn btn-primary">Сохранить</button>
             <a href="{% url 'category_products' id=category.id %}" class="btn btn-secondary">Отмена</a>
         </form>

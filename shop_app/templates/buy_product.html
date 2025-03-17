@@ -1,22 +1,39 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Покупка {{ product.name }}{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'buy_product.css' %}">
+<div class="container">
     <h1>Покупка товара {{ product.name }}</h1>
-    <p>Цена: {{ calculated_price }}</p> 
-    <form method="post">
+    <p class="price">Цена: {{ calculated_price }}</p>
+
+    <form method="post" class="buying-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Завершить покупку</button>
-        <a href="{% url 'cart' %}">Отмена</a>
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in field.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Завершить покупку</button>
+        <a href="{% url 'cart' %}" class="btn btn-secondary">Отмена</a>
     </form>
 
     {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}" role="alert">
-            {{ message }}
-        </div>
-    {% endfor %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endif %}
+</div>
 {% endblock %}

@@ -1,12 +1,31 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-  <h1>Добавить скидку для товара: {{ product.name }}</h1>
+<link rel="stylesheet" href="{% static 'add_discount.css' %}">
+  <div class="container">
+    <h1>Добавить скидку для товара: {{ product.name }}</h1>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Сохранить скидку</button>
-    <a href="{% url 'category_products' id=product.category.id %}">Отмена</a>  <!--  Исправлено -->
-  </form>
+    <form method="post">
+      {% csrf_token %}
+        
+      <div class="form-group">
+          <label for="{{ form.discount.id_for_label }}">{{ form.discount.label }}:</label>
+          <div class="discount-field">
+              {{ form.discount }}
+              <span class="percentage-sign">%</span>
+          </div>
+          {% if form.discount.errors %}
+              <div class="alert alert-danger">
+                  {% for error in form.discount.errors %}
+                      {{ error }}
+                  {% endfor %}
+              </div>
+          {% endif %}
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Сохранить скидку</button>
+      <a href="{% url 'category_products' id=product.category.id %}" class="btn btn-secondary">Отмена</a>  <!--  Исправлено -->
+    </form>
+  </div>
 {% endblock %}
