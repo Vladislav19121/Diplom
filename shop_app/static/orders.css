@@ -1,91 +1,50 @@
-/* Основные стили */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
+/* Стили для блока заказов */
+.orders-container h1, .orders-container h2 {
     color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
-}
-
-/* Заголовок страницы */
-h1, h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-top: 20px;
 }
 
-/* Стили для списка заказов */
-ul {
+.orders-container ul {
     list-style-type: none;
     padding: 0;
-    margin-bottom: 20px;
-    text-align: left; /* Выровняем список влево */
+    margin: 20px auto;
+    width: 80%;
+    background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-li {
-    font-size: 1rem;
-    line-height: 1.5;
+.orders-container ul li {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 }
 
-li:last-child {
+.orders-container ul li:last-child {
     border-bottom: none;
 }
 
-/* Стили для кнопок */
-.btn {
+.orders-container a.btn {
     display: inline-block;
-    font-weight: 400;
+    padding: 10px 20px;
+    margin: 10px;
+    text-decoration: none;
     color: #fff;
+    background-color: #d9534f;
+    border-radius: 5px;
     text-align: center;
-    vertical-align: middle;
-    user-select: none;
-    background-color: #dc3545; /* Красный фон для кнопок */
-    border: 1px solid #dc3545;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    text-decoration: none; /* Убираем подчеркивание */
-    margin: 10px 0; /* Отступ снизу и сверху у кнопок */
-    width: 200px; /* Фиксированная ширина кнопок */
-    display: inline-block; /* Ставим кнопки в ряд */
+    transition: background-color 0.3s;
 }
 
-.btn:hover {
-    background-color: #bd2130; /* Темно-красный фон при наведении */
-    border-color: #bd2130;
+.orders-container a.btn:hover {
+    background-color: #c9302c;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
+.orders-container a.btn-danger {
+    background-color: #d9534f;
+}
 
-    h1, h2 {
-        font-size: 2rem;
-    }
-
-    li {
-        font-size: 0.875rem;
-        padding: 8px;
-    }
-
-    .btn {
-        width: 100%; /* Кнопки занимают всю ширину на маленьких экранах */
-    }
+.orders-container a.btn-danger:hover {
+    background-color: #c9302c;
 }
