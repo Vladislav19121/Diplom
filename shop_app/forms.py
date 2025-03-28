@@ -27,7 +27,7 @@ class ProductForm(forms.ModelForm):
     def clean_discount(self):
         discount = self.cleaned_data['discount']
 
-        if not 0 < discount < 100:
+        if not 0 <= discount <= 100:
             raise forms.ValidationError("Скидка должна находиться в диапозоне от 0 до 100")
         return discount
     
@@ -57,11 +57,11 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'password1', 'password2')
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Пользователь с таким email уже существует")
-        return email
+    # def clean_email(self):
+    #     email = self.cleaned_data.get('email')
+    #     if User.objects.filter(email=email).exists():
+    #         raise forms.ValidationError("Пользователь с таким email уже существует")
+    #     return email
 
 class BuyingForm(forms.ModelForm):
     class Meta:

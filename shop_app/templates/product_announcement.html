@@ -15,7 +15,8 @@
                     <div class="card-body">
                         <h2 class="card-title">{{ product.name }}</h2>
                         <p class="card-text"><strong>Описание:</strong> {{ product.description|default:"Нет описания" }}</p>
-                        <p class="card-text"><strong>Цена:</strong> {{ product.price }} руб.</p>
+                        <p class="card-text"><strong>Цена в бел.рублях:</strong> {{ product.price }} руб.</p>
+                        
                         <p class="card-text"><strong>Продавец:</strong> {{ product.user.username }}</p>
                         <p class="card-text"><strong>Номер телефона:</strong> {{ product.tel_number }}</p>
                         <p class="card-text"><strong>Категория:</strong> {{ product.category.name }}</p>

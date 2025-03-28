@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'buy_product.css' %}">
 <div class="container">
     <h1>Покупка товара {{ product.name }}</h1>
-    <p class="price">Цена: {{ calculated_price }}</p>
+    <p class="price">Цена с учетом доставки: {{ calculated_price }}</p>
 
     <form method="post" class="buying-form">
         {% csrf_token %}
