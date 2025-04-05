@@ -10,8 +10,11 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = '__all__' 
+        read_only_fields = ['user']
 
+        
+        
 class OrderSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
     price = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
@@ -25,9 +28,10 @@ class OrderSerializer(serializers.ModelSerializer):
         product = data['product']
         quantity = data['quantity_product']
 
-        if product.stock < quantity:
+        if product.stock < quantity or quantity == 0:
             raise serializers.ValidationError("Недостаточно товара на складе")
         return data
+
     
     def create(self, validated_data):
         product = validated_data['product']

@@ -82,6 +82,7 @@ WSGI_APPLICATION = 'diplom_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import sys
 
 DATABASES = {
     'default': {
@@ -93,6 +94,12 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'test.db',  
+    }
 
 
 # Password validation
@@ -133,6 +140,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS =[
     BASE_DIR / 'shop_app/static',
 ]
+
 
 LOGIN_REDIRECT_URL = ''
 

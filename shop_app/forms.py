@@ -68,6 +68,11 @@ class BuyingForm(forms.ModelForm):
         model = Order
         fields = ['quantity_product', 'address', 'tel_number', 'payment', 'comment']
 
+    def clean_quantity_product(self):
+        quantity = int(self.cleaned_data['quantity_product'])
+        if quantity == 0:
+            raise forms.ValidationError("Вы не можете заказать 0 товаров")
+
     def clean_tel_number(self):
         tel_number = self.cleaned_data['tel_number']
         if not tel_number:

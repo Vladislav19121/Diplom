@@ -6,9 +6,11 @@ from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm, Bu
 from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from .serializers import *
 from rest_framework import filters # Фильтрация
+from rest_framework.decorators import action
+from django import forms
 
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -18,39 +20,63 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class BaseViewSet(viewsets.ModelViewSet):
+    permission_classes_map = {
+        'default': [permissions.AllowAny],      
+    }
+
+    def get_permissions(self):
+        permission_classes = self.permission_classes_map.get(self.action, self.permission_classes_map['default'])
+        return [permission() for permission in permission_classes]
+
+class CategoryViewSet(BaseViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes_map = {
+        'create': [IsAdminUser],
+        'destroy': [IsAdminUser],
+        'default': [permissions.AllowAny]
+    } 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(BaseViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'price']
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'price'] 
-
-class OrderViewSet(viewsets.ModelViewSet):
-    serializer_class = OrderSerializer
-
+    permission_classes_map = {
+        'create': [IsAuthenticated],  
+        'update': [IsAdminUser],
+        'partial_update': [IsAdminUser],
+        'destroy': [IsAdminUser],
+        'default': [permissions.AllowAny],
+        
+    }
+    
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class OrderViewSet(BaseViewSet):
+    serializer_class = OrderSerializer
+    permission_classes_map = {
+        'default': [IsAuthenticated]
+    }
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+        else:
+            raise forms.ValidationError("Возникла ошибка")
     
     def get_queryset(self):
         if self.request.user.is_staff:
             return Order.objects.all()
         else:
             return Order.objects.filter(user=self.request.user)
+        
     
-    def get_permissions(self):
-        if self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsAdminUser]
-        else:
-            permission_classes = [IsAuthenticated]
-
-        return [permission() for permission in permission_classes]
+    
     
 def is_admin(user):
     return user.is_staff
@@ -302,7 +328,7 @@ def order_product(request, id):
         if form.is_valid():
             quantity = form.cleaned_data['quantity_product']
             calculated_price = product.price * quantity + 100
-            if quantity <= product.stock:
+            if  quantity <= product.stock:
                 order = form.save(commit=False)
                 order.product = product
                 order.user = request.user
