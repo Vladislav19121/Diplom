@@ -158,3 +158,33 @@ class UserProductTest(TestCase):
         response = self.client.post(url, data, format='json')
         print(response.data)
         self.assertEqual(response.status_code, 201)
+
+    def test_make_order_unauthorized(self):
+        url = reverse('orders-list')
+        data = {
+            'product': self.product.id,
+            'quantity_product': 1,
+            'address': 'New TestStreet 27',
+            'tel_number': '+375291705757',
+            'payment': 'cash',  
+            'price': self.product.price,
+            'comment': 'TestComment'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_make_order_quantity_goods_more_than_exists(self):
+        self.client.force_authenticate(self.admin_user)
+        url = reverse('orders-list')
+        data = {
+            'product': self.product.id,
+            'quantity_product': 5,
+            'address': 'New TestStreet 27',
+            'tel_number': '+375291705757',
+            'payment': 'cash',  
+            'price': self.product.price,
+            'comment': 'TestComment'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, 400)
+    

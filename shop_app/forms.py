@@ -34,7 +34,7 @@ class ProductForm(forms.ModelForm):
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ['name', 'description', 'image', 'parent']
+        fields = ['name', 'description', 'image']
 
 class DiscountForm(forms.Form):
     discount = forms.DecimalField(
@@ -64,14 +64,21 @@ class RegistrationForm(UserCreationForm):
     #     return email
 
 class BuyingForm(forms.ModelForm):
+    
     class Meta:
         model = Order
         fields = ['quantity_product', 'address', 'tel_number', 'payment', 'comment']
 
     def clean_quantity_product(self):
-        quantity = int(self.cleaned_data['quantity_product'])
+        quantity = self.cleaned_data['quantity_product']
+        try:
+            quantity = int(quantity)  
+        except ValueError:
+            raise forms.ValidationError("Пожалуйста, введите число.") # Проверка на то, число ли это
+
         if quantity == 0:
             raise forms.ValidationError("Вы не можете заказать 0 товаров")
+        return quantity
 
     def clean_tel_number(self):
         tel_number = self.cleaned_data['tel_number']

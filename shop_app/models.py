@@ -9,7 +9,6 @@ class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название категории")
     description = models.TextField(blank=True, verbose_name="Описание категории")
     image = models.ImageField(upload_to='categories/', blank=True, null=True, verbose_name="Изображение категории")   
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.SET_NULL, verbose_name="Родительская категория")
     
     class Meta:
         verbose_name = 'Категория'
