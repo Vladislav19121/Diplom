@@ -70,12 +70,7 @@ class BuyingForm(forms.ModelForm):
         fields = ['quantity_product', 'address', 'tel_number', 'payment', 'comment']
 
     def clean_quantity_product(self):
-        quantity = self.cleaned_data['quantity_product']
-        try:
-            quantity = int(quantity)  
-        except ValueError:
-            raise forms.ValidationError("Пожалуйста, введите число.") # Проверка на то, число ли это
-
+        quantity = int(self.cleaned_data['quantity_product'])
         if quantity == 0:
             raise forms.ValidationError("Вы не можете заказать 0 товаров")
         return quantity
