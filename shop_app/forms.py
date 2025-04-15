@@ -1,15 +1,16 @@
 from django import forms
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
-import phonenumbers
+from .utils import validate_tel_number
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'city', 'price', 'image', 'category', 'stock', 'discount']
+        fields = ['name', 'description', 'city', 'price', 'image', 'category', 'stock', 'discount', 'tel_number']
         widgets = {
             'discount': forms.NumberInput(attrs=({'placeholder': 'Введите скидку в процентах (0-100)'}))
-        }
+            
+        }   
     def clean_price(self):
         price = self.cleaned_data['price']
 
@@ -30,6 +31,13 @@ class ProductForm(forms.ModelForm):
         if not 0 <= discount <= 100:
             raise forms.ValidationError("Скидка должна находиться в диапозоне от 0 до 100")
         return discount
+
+    def clean_tel_number(self):
+        tel_number = self.cleaned_data['tel_number']
+        try:
+            return validate_tel_number(tel_number)
+        except ValueError as e:
+            raise forms.ValidationError(str(e))
     
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -77,20 +85,10 @@ class BuyingForm(forms.ModelForm):
 
     def clean_tel_number(self):
         tel_number = self.cleaned_data['tel_number']
-        if not tel_number:
-            raise forms.ValidationError("Укажите номер телефона")
-        if not tel_number.startswith('+'):
-            raise forms.ValidationError("Номер телефона должен начинаться с '+'")
-        
         try:
-            parsed_number = phonenumbers.parse(tel_number, "BY")
-
-            if not phonenumbers.is_valid_number(parsed_number):
-                raise forms.ValidationError("Неверный формат номера телефона для Беларуси.")
-        except Exception as e:
-            raise forms.ValidationError(f"Ошибка при указании номера телефона: {e}")
-        
-        return tel_number
+            return validate_tel_number(tel_number)
+        except ValueError as e:
+            raise forms.ValidationError(str(e))
        
 
 class OrderStatusForm(forms.ModelForm):
