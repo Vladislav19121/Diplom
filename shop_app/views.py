@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, authenticate, logout
-from .forms import ProductForm, CategoryForm, DiscountForm, RegistrationForm, BuyingForm, OrderStatusForm
+from .forms import (ProductForm, CategoryForm, DiscountForm, 
+RegistrationForm, BuyingForm, OrderStatusForm)
+
 from django.contrib.auth.decorators import login_required,  user_passes_test
 from django.contrib import messages
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -20,13 +22,17 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 
+
+
 class BaseViewSet(viewsets.ModelViewSet):
     permission_classes_map = {
         'default': [permissions.AllowAny],      
     }
 
     def get_permissions(self):
-        permission_classes = self.permission_classes_map.get(self.action, self.permission_classes_map['default'])
+        permission_classes = self.permission_classes_map.get(
+            self.action, self.permission_classes_map['default']
+            )
         return [permission() for permission in permission_classes]
 
 class CategoryViewSet(BaseViewSet):
@@ -103,7 +109,8 @@ def registration(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(mail_subject, message, to=[to_email])
             email.send()
-            return render (request, 'acc_activate_sent.html', {'email': to_email})
+            return render (request, 'acc_activate_sent.html', 
+                           {'email': to_email})
     else:
         form = RegistrationForm()
 
@@ -172,7 +179,9 @@ def add_category(request):
         if 'add_category' in request.GET:  
             show_form = True
 
-    return render(request, 'home.html', {'categories': categories, 'form': form, 'show_form': show_form})
+    return render(request, 'home.html', {'categories': categories, 
+                                         'form': form, ''
+                                         'show_form': show_form})
 
 @login_required
 @user_passes_test(is_admin)
@@ -197,7 +206,8 @@ def add_discount(request, id):
         form = DiscountForm()
 
     
-    return render(request, 'add_discount.html', {'form': form, 'product': product})
+    return render(request, 'add_discount.html', {'form': form, 
+                                                 'product': product})
 
 @login_required
 @user_passes_test(is_admin)
@@ -236,7 +246,8 @@ def open_category(request, id):
     }
 
     cities_translated = [
-        {'value': city, 'display': city_translations.get(city, city)} for city in cities
+        {'value': city, 
+         'display': city_translations.get(city, city)} for city in cities
     ]
     error_message = None
     try:
@@ -255,9 +266,10 @@ def open_category(request, id):
 
     if min_price and max_price and min_price > max_price:
         error_message = "Минимальная цена не может быть больше максимальной."
-    return render(request, 'category_products.html', {'products': products, 'category': category, 
-                                                          'min_price': min_price, 'max_price': max_price, 
-                                                          'cities': cities_translated, 'error': error_message})
+    return render(request, 'category_products.html', 
+                  {'products': products, 'category': category, 
+                    'min_price': min_price, 'max_price': max_price, 
+                    'cities': cities_translated, 'error': error_message})
 @login_required
 def add_product(request, id):
     category = get_object_or_404(Category, id=id)
@@ -272,7 +284,8 @@ def add_product(request, id):
     else:
         form = ProductForm()
 
-    return render(request, 'add_product.html', {'form': form, 'category': category})
+    return render(request, 'add_product.html', {'form': form, 
+                                                'category': category})
 
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)
@@ -282,16 +295,16 @@ def delete_product(request, id):
 @login_required   
 def cart(request):
     cart_products = Cart.objects.filter(user=request.user).order_by('added_at')
-    print("Содержимое корзины:")
-    for item in cart_products:
-        print(f"ID: {item.id}, Product: {item.product.name}, Quantity: {item.quantity}")
     total = sum(product.total_price() for product in cart_products)
-    return render(request, 'cart.html', {'cart_products': cart_products, 'total': total})
+    return render(request, 'cart.html', {
+        'cart_products': cart_products, 'total': total
+        })
 
 @login_required   
 def add_product_in_cart(request, id):
     product = get_object_or_404(Product, id=id)
-    cart_item, created = Cart.objects.get_or_create(product=product, user=request.user)
+    cart_item, created = Cart.objects.get_or_create(product=product, 
+                                                    user=request.user)
     if not created:
         cart_item.quantity += 1
         cart_item.save()
@@ -305,9 +318,6 @@ def remove_form_cart(request, id):
     cart_item.delete()
     return redirect('cart')
 
-
-
-
 def search_results(request):
     query = request.GET.get('q')
     product_results = []
@@ -318,7 +328,9 @@ def search_results(request):
             models.Q(description__icontains=query) 
         )
 
-    return render(request, 'search_results.html', {'query': query, 'product_results': product_results})
+    return render(request, 'search_results.html', {
+        'query': query, 'product_results': product_results
+        })
 
 def order_product(request, id):
     product = get_object_or_404(Product, id=id)
@@ -337,7 +349,8 @@ def order_product(request, id):
                 product.save()           
                 order.save()
                 
-                cart_items = Cart.objects.filter(product=product, user=request.user)
+                cart_items = Cart.objects.filter(product=product, 
+                                                 user=request.user)
                 for item in cart_items:
                     item.delete()
                 
@@ -350,20 +363,32 @@ def order_product(request, id):
                 })
                 from_email = 'pyshop1912@gmail.com'
                 recipient_list = ['pyshop1912@gmail.com', request.user.email]
-                send_mail(subject, message, from_email, recipient_list, html_message=message)
+                send_mail(subject, message, from_email, 
+                          recipient_list, html_message=message)
 
                 return redirect('orders')
             
             else:
-                messages.error(request, f'Вы не можете заказать больше {product.stock} {product.name}, т.к на складе столько нет')
-                return render(request, 'buy_product.html', {'form': form, 'calculated_price': calculated_price, 'product': product})
+                messages.error(request, f"""
+                               Вы не можете заказать больше {product.stock} {product.name}, 
+                               т.к на складе столько нет""")
+                
+                return render(request, 'buy_product.html', {
+                    'form': form, 
+                    'calculated_price': calculated_price, 
+                    'product': product
+                    })
         else:
             messages.error(request, "Ошибка в форме. Проверьте введенные данные.")
-            return render(request, 'buy_product.html', {'form': form, 'product': product})
+            return render(request, 'buy_product.html', {
+                'form': form, 'product': product
+                })
     else:
         form = BuyingForm()
 
-    return render(request, 'buy_product.html', {'form': form, 'product': product, 'calculated_price': calculated_price})
+    return render(request, 'buy_product.html', {
+        'form': form, 'product': product, 
+        'calculated_price': calculated_price})
 
 def my_orders(request):
     orders = Order.objects.filter(user=request.user)
@@ -394,7 +419,8 @@ def change_status(request, id):
             })
             from_email = 'pyshop1912@gmail.com'
             recipient_list = [order.user.email]
-            send_mail(subject, message, from_email, recipient_list, html_message=message)
+            send_mail(subject, message, from_email, 
+                      recipient_list, html_message=message)
 
             return redirect('orders')
         else:
@@ -413,13 +439,19 @@ def change_announcement(request, id):
             return redirect('category_products', id=announcement.category.id)
         else:
             messages.error(request, "Ошибка в форме. Проверьте введенные данные.")
-            return render(request, 'orders.html', {'form': form, 'announcement': announcement})
+            return render(request, 'orders.html', {
+                'form': form, 'announcement': announcement
+                })
         
-    return render(request, 'change_announcement.html', {'form': form, 'announcement': announcement})
+    return render(request, 'change_announcement.html', {
+        'form': form, 'announcement': announcement}
+        )
 
 def my_announcements(request):
     announcements = Product.objects.filter(user=request.user)
-    return render(request, 'my_announcements.html', {'announcements': announcements})
+    return render(request, 'my_announcements.html', {
+        'announcements': announcements
+        })
 
 def product_annoucnement(request, id):
     product = get_object_or_404(Product, id=id)
