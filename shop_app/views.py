@@ -158,6 +158,7 @@ def home(request):
     categories = Category.objects.all()
     return render(request, 'home.html', {'categories': categories})
 
+@login_required
 def user_page(request, id):
     user = get_object_or_404(User, id=id)
     show_button = True
@@ -224,7 +225,7 @@ def open_category(request, id):
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     city = request.GET.get('city')
-    cities = list(set(products.values_list('city', flat=True)))  # Убираем дубли
+    cities = list(set(products.values_list('city', flat=True)))#список значений а не список кортежей  # Убираем дубли
     city_translations = {
     'minsk': 'Минск',
     'gomel': 'Гомель',
@@ -289,7 +290,8 @@ def add_product(request, id):
 
 def delete_product(request, id):
     product = get_object_or_404(Product, id=id)
-    product.delete()
+    if request.user == product.user:
+        product.delete()
     return redirect('category_products', id = product.category.id)
 
 @login_required   
@@ -447,11 +449,13 @@ def change_announcement(request, id):
         'form': form, 'announcement': announcement}
         )
 
+@login_required
 def my_announcements(request):
     announcements = Product.objects.filter(user=request.user)
     return render(request, 'my_announcements.html', {
         'announcements': announcements
         })
+
 
 def product_annoucnement(request, id):
     product = get_object_or_404(Product, id=id)
